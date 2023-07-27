@@ -43,6 +43,7 @@ jobs:
             type=raw,value=latest,enable=${{ endsWith(github.ref, github.event.repository.default_branch) }}
             type=ref,event=pr
             type=ref,event=branch
+            type=ref,event=push
             type=semver,pattern={{version}}
       
       - name: Docker build
@@ -61,7 +62,7 @@ jobs:
         # from https://github.com/marketplace/actions/create-or-update-comment
       - name: Find comment for image tags
         uses: peter-evans/find-comment@v2
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'push'
         id: fc
         with:
           issue-number: ${{ github.event.pull_request.number }}
@@ -71,7 +72,7 @@ jobs:
         # If PR, put image tags in the PR comments
       - name: Create or update comment for image tags
         uses: peter-evans/create-or-update-comment@v3
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'push'
         with:
           comment-id: ${{ steps.fc.outputs.comment-id }}
           issue-number: ${{ github.event.pull_request.number }}
@@ -85,5 +86,8 @@ jobs:
             ```text
             ${{ steps.docker_meta.outputs.labels }}
             ```
+            Repo url:
+            ```text
+            ${{ github.event.repository.name }}
           edit-mode: replace
 #NEW: (END) ############################################################
