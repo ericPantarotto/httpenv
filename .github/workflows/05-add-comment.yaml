@@ -62,7 +62,7 @@ jobs:
         # from https://github.com/marketplace/actions/create-or-update-comment
       - name: Find comment for image tags
         uses: peter-evans/find-comment@v2
-        if: github.event_name == 'push'
+        if: github.event_name == 'push_request'
         id: fc
         with:
           issue-number: ${{ github.event.pull_request.number }}
@@ -72,7 +72,7 @@ jobs:
         # If PR, put image tags in the PR comments
       - name: Create or update comment for image tags
         uses: peter-evans/create-or-update-comment@v3
-        if: github.event_name == 'push'
+        if: github.event_name == 'push_request'
         with:
           comment-id: ${{ steps.fc.outputs.comment-id }}
           issue-number: ${{ github.event.pull_request.number }}
