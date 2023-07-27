@@ -48,7 +48,7 @@ jobs:
       - name: Docker build
         uses: docker/build-push-action@v4
         with:
-          push: false # false for this demo to prevent overwriting image tags of other examples
+          push: true # false for this demo to prevent overwriting image tags of other examples
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
           cache-from: type=gha
