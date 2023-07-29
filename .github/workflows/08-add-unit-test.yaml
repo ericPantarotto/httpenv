@@ -33,7 +33,7 @@ jobs:
           push: false
           load: true # Export to Docker Engine rather than pushing to a registry
           tags: ${{ github.run_id }}
-          target: test
+          #target: test
           cache-from: type=gha
           cache-to: type=gha,mode=max
           platforms: linux/amd64
@@ -48,7 +48,7 @@ jobs:
         id: docker_meta
         uses: docker/metadata-action@v4
         with:
-          images: bretfisher/docker-ci-automation
+          images: ericpython80/docker-ci-automation
           flavor: |
             latest=false
           tags: |
