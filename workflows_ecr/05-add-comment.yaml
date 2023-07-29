@@ -35,7 +35,7 @@ jobs:
         id: docker_meta
         uses: docker/metadata-action@v4
         with:
-          images: ericpython80/docker-ci-automation
+          images: bretfisher/docker-ci-automation
           flavor: |
             latest=false
           tags: |
@@ -48,7 +48,7 @@ jobs:
       - name: Docker build
         uses: docker/build-push-action@v4
         with:
-          push: true # false for this demo to prevent overwriting image tags of other examples
+          push: false # false for this demo to prevent overwriting image tags of other examples
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
           cache-from: type=gha
@@ -61,7 +61,7 @@ jobs:
         # from https://github.com/marketplace/actions/create-or-update-comment
       - name: Find comment for image tags
         uses: peter-evans/find-comment@v2
-        if: github.event_name == 'push_request'
+        if: github.event_name == 'pull_request'
         id: fc
         with:
           issue-number: ${{ github.event.pull_request.number }}
@@ -71,7 +71,7 @@ jobs:
         # If PR, put image tags in the PR comments
       - name: Create or update comment for image tags
         uses: peter-evans/create-or-update-comment@v3
-        if: github.event_name == 'push_request'
+        if: github.event_name == 'pull_request'
         with:
           comment-id: ${{ steps.fc.outputs.comment-id }}
           issue-number: ${{ github.event.pull_request.number }}
@@ -85,8 +85,5 @@ jobs:
             ```text
             ${{ steps.docker_meta.outputs.labels }}
             ```
-            Repo url:
-            ```text
-            ${{ github.event.repository.name }}
           edit-mode: replace
 #NEW: (END) ############################################################
