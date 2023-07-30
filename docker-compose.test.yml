@@ -18,7 +18,7 @@ services:
       allhands22:
         condition: service_started
       postgres:
-        condition: service_healthy
+        condition: service_started
     # run all your tests here against the allhands22 service
     #command: curl --fail http://allhands22:80 || exit 1
     command: echo "run integration here"
