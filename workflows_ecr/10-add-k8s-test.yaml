@@ -6,6 +6,10 @@ on:
     branches:
       - main
   pull_request:
+# Defines two custom environment variables for the workflow. These are used for the Container registry domain, and a name for the Docker image that this workflow builds.
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   build-image:
@@ -39,16 +43,23 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      
+     
+      - name: Checkout repository
+        uses: actions/checkout@v3
+     
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
       - name: Build and Push to GHCR
         uses: docker/build-push-action@v4
         with:
+          context: .
           push: true
-          tags: ghcr.io/ericpython/httpenv:${{ github.run_id }}
-          #target: test
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          platforms: linux/amd64
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
 
       - uses: AbsaOSS/k3d-action@v2
         with:
